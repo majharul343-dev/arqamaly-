@@ -1,0 +1,100 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Dashboard &mdash; Expense Tracker{% endblock %}
+
+{% block body %}
+
+<div class="page-header">
+    <h4>&#128200; Dashboard</h4>
+    <a href="/expense-tracker/add-expense-form.php" class="btn btn-primary btn-sm">&#43; Add Expense</a>
+</div>
+
+<!-- Stat Cards -->
+<div class="row g-3 mb-3">
+    <div class="col-6 col-md-3">
+        <div class="stat-card stat-blue">
+            <div class="stat-label">Spent This Month</div>
+            <div class="stat-value">&pound;{{ total_spent|number_format(2) }}</div>
+            <span class="stat-icon">&#128197;</span>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        {% if budget > 0 %}
+        <div class="stat-card {% if total_spent > budget %}stat-red{% else %}stat-green{% endif %}">
+            <div class="stat-label">Remaining Budget</div>
+            <div class="stat-value">&pound;{{ (budget - total_spent)|number_format(2) }}</div>
+            <span class="stat-icon">&#127881;</span>
+        </div>
+        {% else %}
+        <div class="stat-card stat-gray">
+            <div class="stat-label">Budget</div>
+            <div class="stat-value">Not set</div>
+            <span class="stat-icon">&#9881;</span>
+        </div>
+        {% endif %}
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card stat-purple">
+            <div class="stat-label">All-Time Spent</div>
+            <div class="stat-value">&pound;{{ all_time_total|number_format(2) }}</div>
+            <span class="stat-icon">&#128180;</span>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-card stat-orange">
+            <div class="stat-label">Total Expenses</div>
+            <div class="stat-value">{{ expense_count }}</div>
+            <span class="stat-icon">&#128203;</span>
+        </div>
+    </div>
+</div>
+
+<!-- Budget Progress -->
+{% if budget > 0 %}
+{% set pct = ((total_spent / budget) * 100)|round %}
+<div class="budget-section">
+    <div class="d-flex justify-content-between align-items-center">
+        <span class="fw-semibold small">Monthly Budget Usage</span>
+        <span class="small text-muted">{{ pct }}%</span>
+    </div>
+    <div class="budget-bar-wrap">
+        <div class="budget-bar {% if pct >= 90 %}danger{% elseif pct >= 70 %}warning{% endif %}"
+             style="width: {{ [pct, 100]|min }}%"></div>
+    </div>
+    <div class="d-flex justify-content-between mt-1">
+        <span class="small text-muted">&pound;{{ total_spent|number_format(2) }} spent</span>
+        <span class="small text-muted">&pound;{{ budget|number_format(2) }} budget</span>
+    </div>
+</div>
+{% endif %}
+
+<!-- Category Breakdown -->
+{% if categories %}
+<h6 class="fw-bold mt-4 mb-3 text-muted" style="text-transform:uppercase; letter-spacing:0.6px; font-size:0.78rem;">
+    This Month by Category
+</h6>
+<div class="row g-2">
+    {% for cat in categories %}
+    <div class="col-md-4 col-6">
+        <div class="cat-card">
+            <div>
+                <span class="cat-badge cat-{{ cat.category }}">{{ cat.category }}</span>
+            </div>
+            <div class="cat-amount">&pound;{{ cat.total|number_format(2) }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info mt-3">
+    No expenses this month yet. <a href="/expense-tracker/add-expense-form.php">Add your first one!</a>
+</div>
+{% endif %}
+
+<div class="mt-4 d-flex gap-2 flex-wrap">
+    <a href="/expense-tracker/expense_tracker.php" class="btn btn-outline-primary btn-sm">View All Expenses</a>
+    <a href="/expense-tracker/search-expense.php" class="btn btn-outline-secondary btn-sm">Search</a>
+</div>
+
+{% endblock %}
+

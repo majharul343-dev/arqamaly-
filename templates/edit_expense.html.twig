@@ -1,0 +1,57 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Edit Expense &mdash; Expense Tracker{% endblock %}
+
+{% block body %}
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="form-card">
+            <h4>&#9998; Edit Expense</h4>
+
+            <form method="post" action="/expense-tracker/edit-expense.php">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <input type="hidden" name="id" value="{{ expense.id }}">
+
+                <div class="mb-3">
+                    <label class="form-label">Name</label>
+                    <input type="text" class="form-control" name="name"
+                           value="{{ expense.name }}" required maxlength="100">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Amount (&pound;)</label>
+                    <div class="input-group">
+                        <span class="input-group-text">&pound;</span>
+                        <input type="number" step="0.01" min="0.01" class="form-control"
+                               name="amount" value="{{ expense.amount }}" required>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Category</label>
+                    <select class="form-select" name="category" required>
+                        {% set cats = ['Food','Transport','Entertainment','Bills','Shopping','Health','Education','Other'] %}
+                        {% for c in cats %}
+                        <option value="{{ c }}" {% if expense.category == c %}selected{% endif %}>{{ c }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Date</label>
+                    <input type="date" class="form-control" name="date_created"
+                           value="{{ expense.date_created }}" required>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-success">Update</button>
+                    <a href="/expense-tracker/expense_tracker.php" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+

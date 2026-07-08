@@ -1,0 +1,60 @@
+{% extends "base.html.twig" %}
+
+{% block title %}My Expenses &mdash; Expense Tracker{% endblock %}
+
+{% block body %}
+
+<div class="page-header">
+    <h4>&#128203; My Expenses</h4>
+    <a href="/expense-tracker/add-expense-form.php" class="btn btn-primary btn-sm">&#43; Add Expense</a>
+</div>
+
+{% if expenses %}
+<div class="expense-table">
+    <table class="table table-hover mb-0">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Amount</th>
+                <th>Category</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in expenses %}
+            <tr>
+                <td class="text-muted small">{{ row.id }}</td>
+                <td class="fw-semibold">{{ row.name }}</td>
+                <td><strong>&pound;{{ row.amount|number_format(2) }}</strong></td>
+                <td>
+                    <span class="cat-badge cat-{{ row.category }}">{{ row.category }}</span>
+                </td>
+                <td class="text-muted small">{{ row.date_created }}</td>
+                <td>
+                    <a href="/expense-tracker/edit-expense-form.php?id={{ row.id }}"
+                       class="btn btn-warning btn-sm">Edit</a>
+                    <a href="/expense-tracker/delete-expense.php?id={{ row.id }}&csrf_token={{ csrf_token }}"
+                       class="btn btn-danger btn-sm"
+                       onclick="return confirm('Delete this expense?');">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2" class="text-end fw-bold">Total</td>
+                <td colspan="4" class="fw-bold">&pound;{{ total|number_format(2) }}</td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-info mt-2">
+    No expenses recorded yet. <a href="/expense-tracker/add-expense-form.php">Add your first one!</a>
+</div>
+{% endif %}
+
+{% endblock %}
+

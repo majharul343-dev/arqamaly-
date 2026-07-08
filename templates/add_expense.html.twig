@@ -1,0 +1,78 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Add Expense &mdash; Expense Tracker{% endblock %}
+
+{% block body %}
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="form-card">
+            <h4>&#43; Add New Expense</h4>
+
+            {% if error %}
+            <div class="alert alert-danger py-2 small">{{ error }}</div>
+            {% endif %}
+
+            <form action="/expense-tracker/add-expense.php" method="post" id="addForm">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+                <div class="mb-3">
+                    <label class="form-label">Name</label>
+                    <input type="text" class="form-control" name="name" required
+                           maxlength="100" placeholder="e.g. Tesco shopping">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Amount (&pound;)</label>
+                    <div class="input-group">
+                        <span class="input-group-text">&pound;</span>
+                        <input type="number" step="0.01" min="0.01" class="form-control"
+                               name="amount" id="amountField" required placeholder="0.00">
+                    </div>
+                    <div class="amount-preview mt-2" id="amountPreview"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Category</label>
+                    <select class="form-select" name="category" required>
+                        <option value="" disabled selected>Select a category</option>
+                        <option value="Food">&#127860; Food</option>
+                        <option value="Transport">&#128664; Transport</option>
+                        <option value="Entertainment">&#127916; Entertainment</option>
+                        <option value="Bills">&#128195; Bills</option>
+                        <option value="Shopping">&#128717; Shopping</option>
+                        <option value="Health">&#128138; Health</option>
+                        <option value="Education">&#127979; Education</option>
+                        <option value="Other">&#128230; Other</option>
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Date</label>
+                    <input type="date" class="form-control" name="date_created" required value="{{ today }}">
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary" type="submit">Save Expense</button>
+                    <a href="/expense-tracker/expense_tracker.php" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$('#amountField').on('input', function () {
+    var val = parseFloat($(this).val());
+    if (!isNaN(val) && val > 0) {
+        $('#amountPreview').text('Amount: £' + val.toFixed(2)).show();
+    } else {
+        $('#amountPreview').hide();
+    }
+});
+</script>
+{% endblock %}
+
